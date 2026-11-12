@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/jbonagura/trustleak/schemas/trustleak-finding-v1.schema.json",
+  "title": "TrustLeak Finding",
+  "description": "A single trust-relationship finding produced by TrustLeak, correlating an active application with a subdomain flagged by ShadowSaaS. This is the contract consumed by the (future) Graph Analyzer / TrustPath — any tool emitting or reading this shape should validate against schema_version before trusting the rest of the document.",
+  "type": "object",
+  "required": ["schema_version", "finding_id", "source", "target", "relationship", "evidence", "confidence", "generated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Pinned to the exact version this document's shape was written against. A consumer must reject (not best-effort-parse) any value it doesn't explicitly handle."
+    },
+    "finding_id": {
+      "type": "string",
+      "pattern": "^TL-[0-9]{4,}$",
+      "description": "Stable identifier for this finding, e.g. 'TL-0001'. Used for dedup and for referencing a finding from the graph."
+    },
+    "source": {
+      "type": "object",
+      "required": ["hostname", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {
+          "type": "string",
+          "description": "The active application that was found referencing the target."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["active_application"],
+          "description": "Reserved for future source kinds (e.g. 'mobile_app', 'config_file'); only 'active_application' exists in v1."
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["hostname", "asset_status"],
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {
+          "type": "string",
+          "description": "The subdomain flagged by ShadowSaaS that 'source' references."
+        },
+        "asset_status": {
+          "type": "string",
+          "enum": ["potential_takeover", "confirmed_takeover", "active_not_abandoned", "unknown"],
+          "description": "Carried over from ShadowSaaS's own takeover_possible/confidence — TrustLeak does not re-derive this, it just quotes it."
+        },
+        "shadowsaas_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "speculative"],
+          "description": "ShadowSaaS's confidence field for this target, copied verbatim. Optional only because a target might reach TrustLeak via a non-ShadowSaaS source in the future (see from_url/external ingestion note in the source-of-truth doc)."
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["type", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "csp_img_src", "csp_script_src", "csp_connect_src", "csp_frame_src",
+            "csp_default_src", "csp_other_directive",
+            "cors_allowed_origin",
+            "cookie_domain_scope",
+            "oauth_redirect_uri",
+            "saml_acs_endpoint",
+            "js_reference"
+          ],
+          "description": "What kind of trust relationship connects source to target. New types must be added here explicitly — no free-text types, so the Graph Analyzer never has to handle an edge type it's never seen."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["observed", "potential_risk", "validated"],
+          "description": "'observed' = reference exists in the evidence, effect not tested. 'potential_risk' = reference plus a corroborating signal (e.g. CSP reference to a ShadowSaaS high-confidence target). 'validated' = actively tested and the trust relationship was confirmed to have effect (e.g. CORS origin reflection confirmed against a controlled Origin header). Never use 'confirmed' here — that word is reserved for a human-reviewed finding in the pentest report, not an automated correlation."
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["source_url", "collected_via"],
+      "additionalProperties": false,
+      "properties": {
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "The exact URL the evidence was observed on."
+        },
+        "header": {
+          "type": "string",
+          "description": "The HTTP header the evidence came from, if applicable (e.g. 'Content-Security-Policy')."
+        },
+        "directive": {
+          "type": "string",
+          "description": "For CSP: the directive matched (e.g. 'img-src'). Omitted for non-CSP relationship types."
+        },
+        "matched_value": {
+          "type": "string",
+          "description": "The literal value that matched the target hostname."
+        },
+        "collected_via": {
+          "type": "string",
+          "enum": ["shadowsaas_probe", "trustleak_active_request"],
+          "description": "Provenance: 'shadowsaas_probe' means this header was already captured by ShadowSaaS's own http_probe() and TrustLeak only read it — no extra request was made. 'trustleak_active_request' means TrustLeak made its own request (e.g. to test CORS origin reflection, which requires sending a controlled Origin header ShadowSaaS never sends). This distinction matters for anyone auditing what traffic actually left the scanner during an engagement."
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "TrustLeak's own confidence in this specific finding — distinct from target.shadowsaas_confidence, which is ShadowSaaS's confidence in the takeover itself. The two can disagree: a low-confidence ShadowSaaS target referenced via a high-confidence CSP match still yields a finding worth a human's attention, just not an automatic escalation."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of when this finding was produced, not when the evidence was collected (see evidence.source_url for that context)."
+    }
+  }
+}

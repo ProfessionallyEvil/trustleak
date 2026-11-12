@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Reports/output generated while testing locally — not source, shouldn't
+# be committed (regenerate anytime with run_trustleak.py)
+*.html
+trustleak_state.json
+
+# Editor/IDE
+.idea/
+.vscode/

@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/jbonagura/trustleak/schemas/shadowsaas-output-v1.schema.json",
+  "title": "ShadowSaaS Surface Scanner output",
+  "description": "The JSON document ShadowSaaS writes via -o/--output. This is TrustLeak's input contract — documented here so a future ShadowSaaS change that breaks this shape is caught at import time, not silently misread.",
+  "type": "object",
+  "required": ["summary", "results"],
+  "additionalProperties": false,
+  "properties": {
+    "summary": {
+      "type": "object",
+      "required": ["total_subdomains", "potential_takeovers", "targets_scanned"],
+      "additionalProperties": false,
+      "properties": {
+        "total_subdomains": {"type": "integer", "minimum": 0},
+        "potential_takeovers": {"type": "integer", "minimum": 0},
+        "targets_scanned": {"type": "integer", "minimum": 0},
+        "warnings": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Present only when a target was aborted (e.g. proxy certificate error). TrustLeak should surface these, not silently import a partial result as if it were complete."
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/result"}
+    }
+  },
+  "definitions": {
+    "result": {
+      "type": "object",
+      "required": [
+        "subdomain", "_source", "dns_active", "dns_target", "saas",
+        "http_status", "risk_score", "takeover_possible", "confidence", "analysis"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "subdomain": {"type": "string"},
+        "_source": {
+          "type": "string",
+          "enum": ["ct_log", "wordlist", "dns_bruteforce", "direct_input", "asverify_derived"]
+        },
+        "dns_active": {"type": "boolean"},
+        "dns_target": {"type": ["string", "null"]},
+        "saas": {"type": ["string", "null"]},
+        "http_status": {"type": ["integer", "null"]},
+        "risk_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "takeover_possible": {"type": "boolean"},
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "speculative"]
+        },
+        "analysis": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "relevant_headers": {
+          "type": "object",
+          "description": "Added in ShadowSaaS's relevant_headers patch. Absent entirely in output from before that patch — not required here so older files still validate; the importer treats a missing key the same as an empty object."
+        },
+        "relevant_body_refs": {
+          "type": "object",
+          "description": "Added in ShadowSaaS's relevant_body_refs patch (iframe/script/form references extracted from the HTML body ShadowSaaS already fetched). Absent entirely in output from before that patch — not required here so older files still validate; the importer treats a missing key the same as an empty object."
+        }
+      }
+    }
+  }
+}

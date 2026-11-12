@@ -1,0 +1,504 @@
+{
+  "summary": {
+    "total_subdomains": 35,
+    "potential_takeovers": 2,
+    "targets_scanned": 1
+  },
+  "results": [
+    {
+      "subdomain": "brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "203.0.113.10",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src https: data:; script-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'",
+        "set-cookie": "__cf_bm=example; HttpOnly; SameSite=None; Secure; Path=/; Domain=zipcdn.example; Expires=Wed, 04 Nov 2026 13:45:14 GMT"
+      }
+    },
+    {
+      "subdomain": "data.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "endothelial-amphibian-4q5kwcu0ac5jnikxyzvm1io4.herokudns.com",
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "aries.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "cors-proxy.eu-west-1.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "elliptical-mistletoe-94ncg6ctkg4mnyy6g9qal4em.herokudns.com",
+      "saas": "heroku",
+      "http_status": 200,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "cors-proxy.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "comparative-bastion-hro2gf8i6na1miej4xe9o63g.herokudns.com",
+      "saas": "heroku",
+      "http_status": 200,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "io.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "structural-spider-5baug00bs3oop4omxlzt8p5o.herokudns.com",
+      "saas": "heroku",
+      "http_status": 404,
+      "risk_score": 80,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": ["DNS active pointing to SaaS", "Heroku router returned empty-body 404 with no backend app match - hostname not bound to any app (confirmed dangling)"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "origin.draco.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "pure-mule-rke83bs38in321n3nh0mm9qk.herokudns.com",
+      "saas": "heroku",
+      "http_status": 404,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 404 from Heroku app - response came from a live backend (not a confirmed takeover)"],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example via.intercom.io; font-src 'self' data: https: *.draco.brightretail.example *.amazonaws.com *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.draco.brightretail.example *.brightretail.example *.googletagmanager.com; report-uri https://o21730.ingest.us.sentry.io/api/45651/security/?sentry_key=example&sentry_environment=draco"
+      }
+    },
+    {
+      "subdomain": "anycable.cetus.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "aqueous-sawfish-80mvo1ru2z1c1ocfakl3j5ru.herokudns.com",
+      "saas": "heroku",
+      "http_status": 404,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 404 from Heroku app - response came from a live backend (not a confirmed takeover)"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "email-webhooks.cetus.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "mammalian-mountain-rpv9a3t1ayiodjbi0pwqmq10.herokudns.com",
+      "saas": "heroku",
+      "http_status": 404,
+      "risk_score": 80,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": ["DNS active pointing to SaaS", "Heroku router returned empty-body 404 with no backend app match - hostname not bound to any app (confirmed dangling)"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "sales.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "custom-tracking.salesloft.com",
+      "saas": null,
+      "http_status": 204,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "status.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "ffnhhljgdpbc.stspg-customer.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "subdomain": "www.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "m6j1r3zl54zs.wpeproxy.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src https: data:; script-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'",
+        "set-cookie": "__cf_bm=example; HttpOnly; SameSite=None; Secure; Path=/; Domain=zipcdn.example; Expires=Wed, 04 Nov 2026 13:45:29 GMT"
+      }
+    },
+    {
+      "subdomain": "support.draco.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.draco.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.draco.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45651/security/?sentry_key=example&sentry_environment=draco"
+      }
+    },
+    {
+      "subdomain": "anycable-cetus.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example *.googletagmanager.com; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "pages.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "info.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "validationhydra.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.hydra.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.hydra.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=hydra"
+      }
+    },
+    {
+      "subdomain": "origin-latency-us.aries.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.aries.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.aries.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=aries"
+      }
+    },
+    {
+      "subdomain": "origin-latency-sg.aries.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.aries.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.aries.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=aries"
+      }
+    },
+    {
+      "subdomain": "latency.cetus.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.cetus.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.cetus.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=cetus"
+      }
+    },
+    {
+      "subdomain": "latency-us.aries.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.aries.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.aries.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=aries"
+      }
+    },
+    {
+      "subdomain": "zipline-cors-proxy.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "cors-anywhere.eu-west-1.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.eu-west-1.brightretail.example *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.eu-west-1.brightretail.example *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=eu-west-1"
+      }
+    },
+    {
+      "subdomain": "cors-anywhere.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "alignments.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "bstheme.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "get.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "dualstack.t.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy-report-only": "default-src 'self' https: http:; connect-src 'self' * wss://*.brightretail.example; font-src 'self' data: https: *.brightretail.example; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: *.brightretail.example; report-uri https://o21730.ingest.us.sentry.io/api/45641/security/?sentry_key=example&sentry_environment=primary"
+      }
+    },
+    {
+      "subdomain": "go.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "secure.pageserve.co",
+      "saas": null,
+      "http_status": 409,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "email.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "4434439.group39.sites.hubspot.net",
+      "saas": null,
+      "http_status": 409,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "data.eu.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "pointy-prawn-vzkqg0rjfjlpnzlo7gkb20ce.herokudns.com",
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "io.eu-west-1.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "clear-durian-p9f3do5xnaulow7asdkznvyc.herokudns.com",
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "draco.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "hydra.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "cetus.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "eu-west-1.brightretail.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    }
+  ]
+}

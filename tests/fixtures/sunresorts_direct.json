@@ -1,0 +1,29 @@
+{
+  "summary": {
+    "total_subdomains": 1,
+    "potential_takeovers": 1,
+    "targets_scanned": 1
+  },
+  "results": [
+    {
+      "subdomain": "preview.tickets.sunresorts.example",
+      "_source": "direct_input",
+      "dns_active": true,
+      "dns_target": "sunresorts-mono-tickets.vercel.app",
+      "saas": "vercel",
+      "http_status": 404,
+      "risk_score": 90,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": [
+        "DNS active pointing to SaaS",
+        "SaaS project appears deleted or orphaned",
+        "Points to claimable SaaS provider: vercel",
+        "HTTP 404 from provider endpoint",
+        "Provider error message: 'deployment could not be found'",
+        "Critical subdomain name"
+      ],
+      "relevant_headers": {}
+    }
+  ]
+}

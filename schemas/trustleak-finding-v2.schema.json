@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/jbonagura/trustleak/schemas/trustleak-finding-v2.schema.json",
+  "title": "TrustLeak Finding (v2)",
+  "description": "Breaking change from v1: the single top-level 'confidence' field is replaced by 'relationship.category' plus 'assessment.{evidence_confidence, potential_impact, validation_status}' — separating 'how sure are we this evidence applies' from 'how bad would this be if exploited'. See trustleak-schema-v2-design.md for the full rationale. No v1 compatibility shim is provided by design (schema_version rejects cleanly instead of silently misreading a missing field).",
+  "type": "object",
+  "required": ["schema_version", "finding_id", "source", "target", "relationship", "assessment", "evidence", "generated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "2.0"
+    },
+    "finding_id": {
+      "type": "string",
+      "pattern": "^TL-[0-9]{4,}$"
+    },
+    "source": {
+      "type": "object",
+      "required": ["hostname", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {"type": "string"},
+        "type": {"type": "string", "enum": ["active_application"]}
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["hostname", "asset_status"],
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {"type": "string"},
+        "asset_status": {
+          "type": "string",
+          "enum": ["potential_takeover", "confirmed_takeover", "active_not_abandoned", "unknown"]
+        },
+        "shadowsaas_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "speculative"]
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["type", "category", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "csp_script_src", "csp_worker_src", "csp_default_src",
+            "csp_connect_src", "csp_frame_src", "csp_img_src", "csp_other_directive",
+            "cors_allowed_origin",
+            "cookie_domain_scope",
+            "html_iframe_embed", "html_script_reference", "html_form_action",
+            "html_oauth_redirect_uri_reference", "html_saml_acs_reference",
+            "js_content_reference"
+          ],
+          "description": "New types added here must also be registered in trustleak/categories.py's TYPE_TO_CATEGORY — schema.py cross-checks the two and rejects a mismatch (see design doc, open question 4, Option C)."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "execution_dependency",
+            "data_exfiltration_dependency",
+            "cross_origin_trust",
+            "shared_scope",
+            "framing_dependency",
+            "resource_dependency",
+            "fallback_dependency",
+            "navigation_dependency",
+            "authentication_dependency",
+            "js_content_dependency"
+          ],
+          "description": "Groups relationship types by risk mechanism, independent of which analyzer produced them. Only categories at least one current analyzer actually emits are listed here. The HTML analyzer's iframe/script references deliberately reuse framing_dependency/execution_dependency rather than introducing a separate 'embedding' category, since the underlying risk mechanism is identical to their CSP counterparts (see categories.py). navigation_dependency was added for <form action>, a genuinely different mechanism (phishing/credential harvesting, not execution or framing). authentication_dependency covers a passive redirect_uri/AssertionConsumerServiceURL reference found in page text (intercepting a login flow if the dangling subdomain is where the identity provider would send the result) — a future ACTIVE OAuth/SAML discovery analyzer (fetching /.well-known/openid-configuration or SAML metadata) would likely reuse this same category rather than needing a new one. js_content_dependency is the first ACTIVE-probe category (see NOTES.md): a suspicious target's hostname found inside a downloaded .js file's own content, assumed high-impact by default since without executing the script there's no way to tell whether it's an execution-style or data-exfiltration-style reference."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["observed", "potential_risk", "validated"],
+          "description": "'confirmed' is deliberately not a value here — reserved for a human-reviewed pentest finding, never an automated correlation."
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "required": ["evidence_confidence", "potential_impact", "validation_status"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "How sure we are this evidence is real and applies to this exact target — driven by whether the policy/header is enforced vs. unenforced (e.g. CSP-Report-Only), whether the matched reference is specific vs. a broad apex wildcard, and ShadowSaaS's own confidence in the target. NOT driven by the kind of relationship — see potential_impact for that."
+        },
+        "potential_impact": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "If the takeover happened and this relationship held, how bad would it be — driven purely by relationship.category (see categories.py's CATEGORY_DEFAULT_IMPACT), with a per-finding override for categories that have one (cross_origin_trust escalates with CORS credentials; shared_scope escalates for a session-like cookie name). Does NOT change based on how certain the evidence is."
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": ["not_validated", "validated", "invalidated"],
+          "description": "Always 'not_validated' today — no analyzer performs active validation yet. Reserved for a future active-probe feature to mark a finding as actively confirmed or ruled out."
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["source_url", "collected_via"],
+      "additionalProperties": false,
+      "properties": {
+        "source_url": {"type": "string", "format": "uri"},
+        "header": {"type": "string"},
+        "directive": {"type": "string"},
+        "matched_value": {"type": "string"},
+        "collected_via": {
+          "type": "string",
+          "enum": ["shadowsaas_probe", "trustleak_active_request"]
+        }
+      }
+    },
+    "generated_at": {"type": "string", "format": "date-time"}
+  }
+}

@@ -1,0 +1,226 @@
+"""
+TrustLeak — quick runnable entry point.
+
+Not the final CLI (that's a later milestone), just enough to point this
+at a real ShadowSaaS -o output file and see what TrustLeak finds, instead
+of only ever seeing results inside pytest assertions.
+"""
+import argparse
+import json
+import os
+import sys
+
+
+def _trustleak_is_importable():
+    """
+    Return True if 'trustleak' is importable as a real package (one that
+    has a __file__), False otherwise — including when it only resolves
+    to an empty/broken namespace package (a bare "import trustleak" can
+    succeed yet be useless: if some OTHER directory earlier on sys.path
+    is also, or only, named "trustleak" but has no real package files in
+    it — e.g. a stray empty folder, or a namespace package merged in from
+    site-packages — Python resolves the import without error, but the
+    result has no __file__ and none of the real submodules).
+
+    Isolated in its own function, with no code after the try/except, so
+    the name bound by "import trustleak" is only ever referenced inside
+    the try block that binds it.
+    """
+    try:
+        import trustleak
+        return bool(getattr(trustleak, "__file__", None))
+    except ImportError:
+        return False
+
+
+def _ensure_trustleak_importable():
+    """
+    Make 'import trustleak' work regardless of which of the two layouts
+    this script was laid out in — same reasoning as
+    shadow_saas_surface.py's _locate_trustleak():
+
+    - nested: this script sits one level above the package folder (e.g.
+      trustleak_prep/run_trustleak.py, trustleak_prep/trustleak/*.py) —
+      Python's default sys.path already covers this, nothing to do.
+    - flat: this script sits directly INSIDE the package folder itself
+      (e.g. trustleak/run_trustleak.py, trustleak/__init__.py side by
+      side) — "import trustleak" then looks for a 'trustleak' folder
+      *inside* this one, which doesn't exist. Add the parent directory
+      to sys.path so this folder itself resolves as the package.
+    """
+    if _trustleak_is_importable():
+        return
+
+    # A broken/empty "trustleak" (even a namespace-package stand-in with
+    # no real content) still gets registered in sys.modules. Without
+    # clearing it, a later "from trustleak import ..." would just return
+    # that same cached, empty module instead of re-searching sys.path
+    # after the fix below runs — making the fix a no-op even once
+    # sys.path is correct.
+    for _name in list(sys.modules):
+        if _name == "trustleak" or _name.startswith("trustleak."):
+            del sys.modules[_name]
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    if os.path.isfile(os.path.join(here, "__init__.py")):
+        parent = os.path.dirname(here)
+        if parent not in sys.path:
+            sys.path.insert(0, parent)
+
+
+_ensure_trustleak_importable()
+
+from trustleak import __version__, correlate, importer, report  # noqa: E402
+from trustleak import state as state_module  # noqa: E402
+
+# Shared between --help's description and the banner printed at the start
+# of every real run, so the two can never drift out of sync with each
+# other.
+_BANNER = f"""┌─────────────────────────────────────────────────────────────────┐
+│                       TrustLeak  v{__version__}                         │
+│      Trust Relationship Correlator for ShadowSaaS Findings      │
+│                      Jordan Bonagura                            │
+│               Secure Ideas - Professionally Evil                │
+└─────────────────────────────────────────────────────────────────┘"""
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="run_trustleak.py",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=f"""
+{_BANNER}
+
+Reads a ShadowSaaS Surface Scanner output file and correlates active
+applications against suspicious (takeover candidate) subdomains,
+looking for trust relationships that extend risk beyond the dangling
+subdomain itself.
+
+Analyzers covered — passive (see NOTES.md):
+  CSP     — Content-Security-Policy / Report-Only directive references
+  CORS    — Access-Control-Allow-Origin (static correlation only)
+  Cookie  — Set-Cookie Domain attribute scope
+  HTML    — iframe/script src/form action references, plus OAuth
+            redirect_uri and SAML AssertionConsumerServiceURL strings
+            already present in the page text
+
+Analyzers covered — ACTIVE, requires --allow-active-probes:
+  JS      — downloads a referenced .js file and searches its content
+            for a suspicious target's hostname. Automatic scope check
+            (see NOTES.md); asks before fetching past ~20 in-scope URLs.
+
+The passive analyzers only correlate data ShadowSaaS already collected
+during its own scan — no new network request. JS does send a new
+request (only to in-scope hosts) and only runs when
+--allow-active-probes is passed explicitly.
+
+Output options:
+  --pretty               — Pretty-print JSON output
+  --html FILE            — Generate a self-contained HTML report
+  --state FILE           — Persist findings across runs with stable finding_ids
+  --allow-active-probes  — Allow active-probe analyzers (JS) to run
+
+Intended for authorized security testing only.
+        """,
+        epilog="""
+Examples:
+  # Correlate a ShadowSaaS output file, print JSON to stdout
+  python run_trustleak.py shadowsaas_output.json
+
+  # Pretty-print the JSON
+  python run_trustleak.py shadowsaas_output.json --pretty
+
+  # Also write a self-contained HTML report
+  python run_trustleak.py shadowsaas_output.json --html trustleak_report.html
+
+  # Both at once
+  python run_trustleak.py shadowsaas_output.json --pretty --html report.html
+
+  # Persist findings across repeated scans of the same target, keeping
+  # stable finding_ids instead of restarting at TL-0001 every run
+  python run_trustleak.py shadowsaas_output.json --state trustleak_state.json
+        """,
+    )
+
+    parser.add_argument(
+        "input_file",
+        nargs="?",
+        help="ShadowSaaS -o output file to correlate (must include relevant_headers)",
+    )
+    parser.add_argument(
+        "--pretty",
+        action="store_true",
+        help="Pretty-print JSON output (indent=2).",
+    )
+    parser.add_argument(
+        "--html",
+        metavar="FILE",
+        help="Write a self-contained HTML report to FILE (e.g. report.html).",
+    )
+    parser.add_argument(
+        "--state",
+        metavar="FILE",
+        help=(
+            "Persist findings across runs in FILE, keeping stable finding_ids "
+            "for the same underlying finding seen again, instead of "
+            "restarting at TL-0001 every run."
+        ),
+    )
+    parser.add_argument(
+        "--allow-active-probes",
+        action="store_true",
+        help=(
+            "Allow active-probe analyzers to send new requests against "
+            "scoped targets, beyond what ShadowSaaS already collected. "
+            "No active-probe analyzer exists yet (see NOTES.md) — this "
+            "flag is a no-op today, and exists ahead of the first one "
+            "being built, not in response to one."
+        ),
+    )
+
+    args = parser.parse_args()
+
+    if not args.input_file:
+        parser.print_help()
+        sys.exit(0)
+
+    print(_BANNER + "\n")
+
+    try:
+        result = importer.import_shadowsaas_output(args.input_file)
+    except (ValueError, FileNotFoundError) as exc:
+        print(f"[!] {exc}")
+        sys.exit(1)
+
+    print(f"[+] Imported {len(result.assets)} assets from {args.input_file}")
+    print(f"    {result.summary()}")
+    if result.skipped:
+        print(f"[!] {len(result.skipped)} record(s) skipped for failing schema validation:")
+        for s in result.skipped:
+            print(f"    - {s['subdomain']}: {s['errors']}")
+
+    findings = correlate.correlate_all(result, allow_active=args.allow_active_probes)
+
+    if args.state:
+        persisted = state_module.load_state(args.state)
+        findings = state_module.assign_stable_ids(findings, persisted)
+        state_module.save_state(args.state, persisted)
+        print(f"[+] Finding IDs persisted in {args.state}")
+
+    print(f"\n[+] {len(findings)} finding(s)")
+    explanation = correlate.explain_empty(result, findings)
+    if explanation:
+        print(f"[*] {explanation}")
+
+    output = {"findings": findings}
+    print(json.dumps(output, indent=2 if args.pretty else None))
+
+    if args.html:
+        html = report.render_html_report(result, findings)
+        with open(args.html, "w", encoding="utf-8") as fh:
+            fh.write(html)
+        print(f"\n[+] HTML report saved to {args.html}")
+
+
+if __name__ == "__main__":
+    main()

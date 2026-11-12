@@ -1,0 +1,1152 @@
+{
+  "summary": {
+    "total_subdomains": 82,
+    "potential_takeovers": 4,
+    "targets_scanned": 1
+  },
+  "results": [
+    {
+      "subdomain": "factura-ludo.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.16",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "factura-joya.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.10",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "menuelegant.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.11",
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.18",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; frame-src 'self' https://vercel.live https://vercel.com; connect-src 'self' https://vercel.live https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "preview.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresorts-mono-world.vercel.app",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "bk-sunresorts-sso-dev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-dev-web-2-2121990663.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "members-api-dev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-dev-web-2-2121990663.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "members-api.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-prod-web-1-737905438.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 403,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "oauth-api.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-prod-web-1-737905438.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 403,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-pos-api.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-pos-objectstore.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-pos.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "cbx.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "3f9b7f671ed7e48c.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.cloudflarestream.com 'unsafe-eval' 'unsafe-inline'; frame-ancestors 'none'"
+      }
+    },
+    {
+      "subdomain": "cbxmexico.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "cdsmexico.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "staging.mexico-open.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "47d0a8ee7176df6a.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 30,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": ["Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com https://sunresorts.example https://*.feverup.com 'self'; frame-src https://snapwidget.com https://*.vercel.com"
+      }
+    },
+    {
+      "subdomain": "mexico-open.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "47d0a8ee7176df6a.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com https://sunresorts.example https://*.feverup.com 'self'; frame-src https://snapwidget.com https://*.vercel.com"
+      }
+    },
+    {
+      "subdomain": "elegant-sms.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "sunresorts-sso-dev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "31ac59439ec47148.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://www.google.com https://www.gstatic.com https://vercel.live; connect-src 'self' https://*.sunresorts.example https://*.amazonaws.com",
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "subdomain": "members-preprod.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresortsbooking-lower-alb-1353861618.mx-central-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'",
+        "set-cookie": "XSRF-TOKEN=example; expires=Wed, 04 Nov 2026 14:12:38 GMT; Max-Age=3600; path=/; secure; samesite=lax"
+      }
+    },
+    {
+      "subdomain": "members-alpha.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresortsbooking-lower-alb-1353861618.mx-central-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'",
+        "set-cookie": "XSRF-TOKEN=example; expires=Wed, 04 Nov 2026 14:12:39 GMT; Max-Age=3600; path=/; secure; samesite=lax"
+      }
+    },
+    {
+      "subdomain": "members-staging.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresortsbooking-lower-alb-1353861618.mx-central-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'",
+        "set-cookie": "XSRF-TOKEN=example; expires=Wed, 04 Nov 2026 14:12:39 GMT; Max-Age=3600; path=/; secure; samesite=lax"
+      }
+    },
+    {
+      "subdomain": "nuevovallarta.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "0a55fc61de644e87.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com 'self'; frame-src https://vercel.live https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "bestofall.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "8c72ecd3656862eb.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 500,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-abc123' 'strict-dynamic' https://www.googletagmanager.com; frame-src https://vercel.live https://iframe.cloudflarestream.com"
+      }
+    },
+    {
+      "subdomain": "preview.bestofall.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "8c72ecd3656862eb.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 30,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": ["Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-xyz789' 'strict-dynamic' https://www.googletagmanager.com https://vercel.live; frame-src https://vercel.live https://iframe.cloudflarestream.com"
+      }
+    },
+    {
+      "subdomain": "elegant-nc.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "develop.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "c85107861beeca4a.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;connect-src wss://ws-us3.pusher.com data: * cdp.vercel.com",
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "subdomain": "voyages.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "vid-b2c-app-nuewq.ondigitalocean.app",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "set-cookie": "__cf_bm=example; HttpOnly; SameSite=None; Secure; Path=/; Domain=voyages.sunresorts.example; Expires=Wed, 04 Nov 2026 13:42:45 GMT"
+      }
+    },
+    {
+      "subdomain": "stg.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "c85107861beeca4a.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;connect-src wss://ws-us3.pusher.com data: * cdp.vercel.com",
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "subdomain": "www.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresorts.example",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": ["CNAME points to first-party domain"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; frame-src 'self' https://vercel.live https://vercel.com; connect-src 'self' https://vercel.live https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "booking.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 200,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible"],
+      "relevant_headers": {
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "subdomain": "rivieramaya.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "0a55fc61de644e87.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com 'self'; frame-src https://vercel.live https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "staging.elegant.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 200,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://embed.cloudflarestream.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.opendns.com https://*.flippingbook.com https://*.sunresorts.example https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "dev.rivieramaya.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.contentstack.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.opendns.com https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "dev.nuevovallarta.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.contentstack.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "dev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 200,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.contentstack.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.opendns.com https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "dev.booking.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 503,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://www.googletagmanager.com 'unsafe-eval' 'unsafe-inline'; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/"
+      }
+    },
+    {
+      "subdomain": "staging.tickets.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://vercel.live/ https://vercel.com 'unsafe-eval' 'unsafe-inline'; frame-src https:"
+      }
+    },
+    {
+      "subdomain": "staging.nuevovallarta.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.contentstack.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "dev.elegant.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 200,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.googleadservices.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.opendns.com https://*.flippingbook.com https://*.sunresorts.example https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "visit.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "97ec34e6c629c4aa.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 401,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "preview.visit.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "97ec34e6c629c4aa.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 401,
+      "risk_score": 30,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": ["Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "staging.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 200,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;connect-src wss://ws-us3.pusher.com data: * cdp.vercel.com",
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "subdomain": "staging.rivieramaya.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://*.contentstack.com 'unsafe-eval' 'unsafe-inline'; frame-src https://*.opendns.com https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "staging.booking.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 503,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://www.googleadservices.com 'unsafe-eval' 'unsafe-inline'; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/"
+      }
+    },
+    {
+      "subdomain": "advisors.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "seashell-app-5eazd.ondigitalocean.app",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "set-cookie": "__cf_bm=example; HttpOnly; SameSite=None; Secure; Path=/; Domain=advisors.sunresorts.example; Expires=Wed, 04 Nov 2026 13:43:15 GMT"
+      }
+    },
+    {
+      "subdomain": "dev.tickets.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "cname.vercel-dns.com",
+      "saas": "vercel",
+      "http_status": 401,
+      "risk_score": 60,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["DNS active pointing to SaaS", "Critical subdomain name"],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://vercel.live/ https://vercel.com 'unsafe-eval' 'unsafe-inline'; frame-src https:"
+      }
+    },
+    {
+      "subdomain": "bk-visit.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.12",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "mexicoopen.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "47d0a8ee7176df6a.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com https://sunresorts.example 'self'; frame-src https://snapwidget.com https://*.vercel.com"
+      }
+    },
+    {
+      "subdomain": "avisos.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.17",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "nuevonayarit.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "0a55fc61de644e87.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com 'self'; frame-src https://vercel.live https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "url6620.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "d.sni.global.fastly.net",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "concertseries.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "wordpress-concertseries-prod-1.azurewebsites.net",
+      "saas": "azure_app_service",
+      "http_status": 200,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["Azure App Service CNAME detected", "DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible"],
+      "relevant_headers": {
+        "set-cookie": "ARRAffinity=example;Path=/;HttpOnly;Secure;Domain=concertseries.sunresorts.example"
+      }
+    },
+    {
+      "subdomain": "brochures.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "online.flippingbook.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; connect-src https://*.contentstack.com 'self'; frame-src https://vercel.live https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "elegant.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "0a55fc61de644e87.vercel-dns-016.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {
+        "content-security-policy": "default-src 'self'; script-src 'self' https://embed.cloudflarestream.com 'unsafe-eval' 'unsafe-inline'; frame-src https://web-modules-de-na1.niceincontact.com https://*.opendns.com https://*.flippingbook.com https://*.sunresorts.example https://*.cloudflarestream.com/ https://vercel.live/ https://vercel.com"
+      }
+    },
+    {
+      "subdomain": "bk-visit-dev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.15",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "mexicoopenventas.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.14",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "travelassistance-webhook.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-prod-web-1-737905438.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 403,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "thestage.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "webapp-thestage-prod-d0e3gahrh0bwhrh6.eastus-01.azurewebsites.net",
+      "saas": "azure_app_service",
+      "http_status": 200,
+      "risk_score": 50,
+      "takeover_possible": false,
+      "confidence": "medium",
+      "analysis": ["Azure App Service CNAME detected", "DNS active pointing to SaaS", "HTTP 200 - SaaS endpoint active, takeover not possible"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "preview.ui.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 30,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": ["Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "ui.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "pressreader.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "travelassistance-webhook-dev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-dev-web-2-2121990663.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 200,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-pos-api-uat.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-pos-uat.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-pos-objectstore-uat.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "elegant-sms-uat.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "preview.riviera-maya.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresorts-mono-riviera-maya.vercel.app",
+      "saas": "vercel",
+      "http_status": 404,
+      "risk_score": 90,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": ["DNS active pointing to SaaS", "SaaS project appears deleted or orphaned", "Points to claimable SaaS provider: vercel", "HTTP 404 from provider endpoint", "Provider error message: 'deployment could not be found'", "Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "preview.tickets.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresorts-mono-tickets.vercel.app",
+      "saas": "vercel",
+      "http_status": 404,
+      "risk_score": 90,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": ["DNS active pointing to SaaS", "SaaS project appears deleted or orphaned", "Points to claimable SaaS provider: vercel", "HTTP 404 from provider endpoint", "Provider error message: 'deployment could not be found'", "Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "preview.nuevo-vallarta.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresorts-mono-nuevo-vallarta.vercel.app",
+      "saas": "vercel",
+      "http_status": 404,
+      "risk_score": 90,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": ["DNS active pointing to SaaS", "SaaS project appears deleted or orphaned", "Points to claimable SaaS provider: vercel", "HTTP 404 from provider endpoint", "Provider error message: 'deployment could not be found'", "Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "preview.booking.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "sunresorts-mono-booking.vercel.app",
+      "saas": "vercel",
+      "http_status": 404,
+      "risk_score": 90,
+      "takeover_possible": true,
+      "confidence": "high",
+      "analysis": ["DNS active pointing to SaaS", "SaaS project appears deleted or orphaned", "Points to claimable SaaS provider: vercel", "HTTP 404 from provider endpoint", "Provider error message: 'deployment could not be found'", "Critical subdomain name"],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "oauth.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "lb-bookingengine-prod-web-1-737905438.us-east-1.elb.amazonaws.com",
+      "saas": null,
+      "http_status": 403,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "bphoxi.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.13",
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "i.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "reservationsbackdev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.15",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "comeconcierge.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "reservationshwdev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "reservationscdsdev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.15",
+      "saas": null,
+      "http_status": 404,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "reservationsdev.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": true,
+      "dns_target": "192.0.2.15",
+      "saas": null,
+      "http_status": 502,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "reservationsdevback.sunresorts.example",
+      "_source": "ct_log",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "asverify.concertseries.sunresorts.example",
+      "_source": "asverify_derived",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    },
+    {
+      "subdomain": "asverify.thestage.sunresorts.example",
+      "_source": "asverify_derived",
+      "dns_active": false,
+      "dns_target": null,
+      "saas": null,
+      "http_status": null,
+      "risk_score": 20,
+      "takeover_possible": false,
+      "confidence": "low",
+      "analysis": [],
+      "relevant_headers": {}
+    }
+  ]
+}
