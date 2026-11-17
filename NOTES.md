@@ -92,3 +92,42 @@ discovery mechanism is identified.
 Still unbuilt from the four original candidates: CORS origin-reflection
 testing. SAML metadata discovery is now considered closed/declined
 rather than merely deferred (see reasoning above).
+
+## Future active-probe candidates (not started, not scoped yet)
+
+Two more active-probe ideas came up after CORS reflection was built —
+recorded here so they aren't lost, but neither has a design doc yet and
+neither is scheduled:
+
+### OAuth redirect_uri acceptance test
+Tests the OTHER side of what oauth_discovery_analyzer.py tests: instead
+of asking "does the active host expose an OIDC discovery document?",
+this would ask "does the real identity provider (Okta, Auth0,
+Salesforce — already seen in live scans) accept a suspicious subdomain
+as a valid redirect_uri?" For each suspicious target that already has a
+passive oauth_redirect_uri reference (html_analyzer.py), start an OAuth
+flow against the real IdP using that subdomain as redirect_uri and
+inspect the response.
+
+Harder than the three built analyzers because every provider's
+rejection format differs (Okta/Auth0/Salesforce/Azure AD all respond
+differently to an unauthorized redirect_uri), and some providers
+redirect even on rejection (to an error page, not the redirect_uri
+itself) — false-positive risk is real and provider-specific parsing
+would be needed.
+
+### postMessage origin-validation check
+Reuses JS content js_analyzer.py already downloads (no new request) —
+search it for `addEventListener("message", ...)` without a matching
+`event.origin` check, when a passive iframe-embed reference
+(html_iframe_embed) already ties the script's host to a suspicious
+target. A classic vulnerability pattern when combined with iframe trust.
+
+Harder than the three built analyzers because this is lightweight
+static JS analysis, not a simple substring/header check — real risk of
+both false positives (origin checked in a form the regex won't
+recognize) and false negatives.
+
+Neither idea is scoped for implementation; revisit only if a concrete
+engagement makes OAuth-flow or iframe/postMessage trust the dominant
+risk surface.
