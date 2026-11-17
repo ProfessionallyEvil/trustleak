@@ -663,7 +663,8 @@ def render_html_report(import_result, findings):
   <button class="filter-btn" onclick="filterByRelationship('cookie',this)">Cookie</button>
   <button class="filter-btn" onclick="filterByRelationship('html',this)">HTML</button>
   <button class="filter-btn" onclick="filterByRelationship('js',this)">JS (active)</button>
-    <button class="filter-btn" onclick="filterByRelationship('oauth_discovery',this)">OAuth Discovery (active)</button>
+  <button class="filter-btn" onclick="filterByRelationship('oauth_discovery',this)">OAuth Discovery (active)</button>
+  <button class="filter-btn" onclick="filterByStatus('validated',this)">✓ Validated Only</button>
   <input id="search" type="text" placeholder="Search source / target…" oninput="searchRows(this.value)"/>
 </div>
 
@@ -684,6 +685,7 @@ def render_html_report(import_result, findings):
   const groupEls = Array.from(document.querySelectorAll('.asset-group'));
   let currentFilter = 'all';
   let currentRelationshipFilter = null;
+  let currentStatusFilter = null;
   let currentSearch = '';
 
   function applyFilters() {{
@@ -702,11 +704,13 @@ def render_html_report(import_result, findings):
         const confidence = r.dataset.confidence;
         const impact = r.dataset.impact;
         const relationship = r.dataset.relationship;
+        const status = r.dataset.status;
         const text = r.textContent.toLowerCase();
-
+        
         let show = true;
         if (currentFilter === 'high' && !(confidence === 'high' && impact === 'high')) show = false;
         if (currentRelationshipFilter && !relationship.startsWith(currentRelationshipFilter)) show = false;
+        if (currentStatusFilter && status !== currentStatusFilter) show = false;
         if (currentSearch && !headerMatches && !text.includes(currentSearch)) show = false;
 
         r.classList.toggle('hidden', !show);
@@ -723,6 +727,7 @@ def render_html_report(import_result, findings):
   function filterRows(type, btn) {{
     currentFilter = type;
     currentRelationshipFilter = null;
+    currentStatusFilter = null;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active','active-danger'));
     btn.classList.add(type === 'high' ? 'active-danger' : 'active');
     applyFilters();
@@ -731,11 +736,21 @@ def render_html_report(import_result, findings):
   function filterByRelationship(prefix, btn) {{
     currentFilter = 'all';
     currentRelationshipFilter = prefix;
+    currentStatusFilter = null;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active','active-danger'));
     btn.classList.add('active');
     applyFilters();
   }}
 
+  function filterByStatus(status, btn) {{
+    currentFilter = 'all';
+    currentRelationshipFilter = null;
+    currentStatusFilter = status;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active','active-danger'));
+    btn.classList.add('active');
+    applyFilters();
+  }}
+  
   function searchRows(val) {{
     currentSearch = val.toLowerCase();
     applyFilters();

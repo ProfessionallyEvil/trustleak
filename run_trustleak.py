@@ -85,30 +85,45 @@ _BANNER = f"""┌─────────────────────
 └─────────────────────────────────────────────────────────────────┘"""
 
 
-def _default_js_output_dir(source_name):
+def _default_evidence_dir(source_name, prefix):
     """
-    Auto-generated default for where the JS active analyzer saves fetched
-    files, so the person running this never HAS to think of a directory
-    name themselves — only --js-output-dir overrides it, for whoever
-    wants to pick their own. Named after the scan file (so evidence from
+    Auto-generated default for where an active analyzer saves its
+    evidence, so the person running this never HAS to think of a
+    directory name themselves — the matching --*-output-dir flag
+    overrides it, for whoever wants to pick their own.
+
+    Placed next to the scan file itself (source_name's own directory),
+    not wherever the current working directory happens to be when the
+    command is run — otherwise the same scan produces evidence in a
+    different physical location depending on which folder you were
+    standing in when you ran run_trustleak.py vs. shadow_saas_surface.py,
+    which is confusing when managing an engagement's evidence across
+    both entry points. Named after the scan file (so evidence from
     different engagements doesn't land in the same place by accident)
     plus a timestamp (so re-running against the same file twice doesn't
     silently overwrite the previous run's evidence).
     """
-    slug = os.path.splitext(os.path.basename(source_name))[0] if source_name else "scan"
+    if source_name:
+        base_dir = os.path.dirname(os.path.abspath(source_name))
+        slug = os.path.splitext(os.path.basename(source_name))[0]
+    else:
+        base_dir = os.getcwd()
+        slug = "scan"
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    return f"trustleak_js_{slug}_{timestamp}"
+    return os.path.join(base_dir, f"trustleak_{prefix}_{slug}_{timestamp}")
+
+
+def _default_js_output_dir(source_name):
+    return _default_evidence_dir(source_name, "js")
 
 
 def _default_oidc_output_dir(source_name):
-    """
-    Same auto-naming philosophy as _default_js_output_dir(), for
-    oauth_discovery_analyzer.py's own evidence (the OIDC discovery
-    documents it finds).
-    """
-    slug = os.path.splitext(os.path.basename(source_name))[0] if source_name else "scan"
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    return f"trustleak_oidc_{slug}_{timestamp}"
+    return _default_evidence_dir(source_name, "oidc")
+
+
+def _default_cors_output_dir(source_name):
+    return _default_evidence_dir(source_name, "cors")
+
 
 def _summarize_findings(findings):
     """
@@ -246,6 +261,16 @@ Examples:
             "Optional — same auto-naming default as --js-output-dir."
         ),
     )
+    parser.add_argument(
+        "--cors-output-dir",
+        metavar="DIR",
+        help=(
+            "Override where the CORS reflection analyzer saves evidence "
+            "for every CONFIRMED reflection (plus a manifest.json) -- a "
+            "pair that didn't reflect produces nothing to save. Optional "
+            "— same auto-naming default as --js-output-dir."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -274,9 +299,12 @@ Examples:
         print(f"[*] JS evidence will be saved to {js_output_dir}")
         oidc_output_dir = args.oidc_output_dir or _default_oidc_output_dir(args.input_file)
         print(f"[*] OIDC evidence will be saved to {oidc_output_dir}")
+        cors_output_dir = args.cors_output_dir or _default_cors_output_dir(args.input_file)
+        print(f"[*] CORS reflection evidence will be saved to {cors_output_dir}")
         active_analyzer_kwargs = {
             "js_content": {"output_dir": js_output_dir},
             "oauth_discovery": {"output_dir": oidc_output_dir},
+            "cors_reflection": {"output_dir": cors_output_dir},
         }
 
     findings = correlate.correlate_all(

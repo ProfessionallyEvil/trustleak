@@ -19,7 +19,7 @@ analyzer exists yet); once one does, it only ever runs when a caller
 explicitly passes allow_active=True, never by default.
 """
 from trustleak import cookie_analyzer, cors_analyzer, csp_analyzer, html_analyzer, js_analyzer
-from trustleak import oauth_discovery_analyzer
+from trustleak import cors_reflection_analyzer, oauth_discovery_analyzer
 
 # Each entry is (name, analyze_fn). Add a new PASSIVE analyzer here — and
 # nowhere else — when one is written; correlate_all() doesn't need to
@@ -38,6 +38,7 @@ _PASSIVE_ANALYZERS = (
 _ACTIVE_ANALYZERS = (
     ("js_content", js_analyzer.analyze_js_content),
     ("oauth_discovery", oauth_discovery_analyzer.analyze_oauth_discovery),
+("cors_reflection", cors_reflection_analyzer.analyze_cors_reflection),
 )
 
 
