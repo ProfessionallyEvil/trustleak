@@ -6,6 +6,7 @@ at a real ShadowSaaS -o output file and see what TrustLeak finds, instead
 of only ever seeing results inside pytest assertions.
 """
 import argparse
+import datetime
 import json
 import os
 import sys
@@ -84,6 +85,23 @@ _BANNER = f"""┌─────────────────────
 └─────────────────────────────────────────────────────────────────┘"""
 
 
+def _summarize_findings(findings):
+    """
+    One short line breaking findings down by potential_impact, printed
+    unconditionally (regardless of --html) so a run without --html isn't
+    just a wall of raw JSON with no quick way to tell, at a glance,
+    whether anything here actually matters.
+    """
+    if not findings:
+        return None
+    counts = {"high": 0, "medium": 0, "low": 0}
+    for f in findings:
+        impact = f.get("assessment", {}).get("potential_impact", "low")
+        counts[impact] = counts.get(impact, 0) + 1
+    parts = [f"{counts[level]} {level} impact" for level in ("high", "medium", "low") if counts[level]]
+    return ", ".join(parts)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="run_trustleak.py",
@@ -119,6 +137,8 @@ Output options:
   --html FILE            — Generate a self-contained HTML report
   --state FILE           — Persist findings across runs with stable finding_ids
   --allow-active-probes  — Allow active-probe analyzers (JS) to run
+  --js-output-dir DIR    — Save every fetched .js file's content (plus a
+                           manifest.json) to DIR. Requires --allow-active-probes.
 
 Intended for authorized security testing only.
         """,
@@ -139,6 +159,10 @@ Examples:
   # Persist findings across repeated scans of the same target, keeping
   # stable finding_ids instead of restarting at TL-0001 every run
   python run_trustleak.py shadowsaas_output.json --state trustleak_state.json
+
+  # Allow the JS active-probe analyzer to run, saving every fetched
+  # .js file's content (plus a manifest.json) for evidence
+  python run_trustleak.py shadowsaas_output.json --allow-active-probes --js-output-dir ./js_evidence
         """,
     )
 
@@ -172,9 +196,18 @@ Examples:
         help=(
             "Allow active-probe analyzers to send new requests against "
             "scoped targets, beyond what ShadowSaaS already collected. "
-            "No active-probe analyzer exists yet (see NOTES.md) — this "
-            "flag is a no-op today, and exists ahead of the first one "
-            "being built, not in response to one."
+            "Today this enables the JS analyzer (downloads a referenced "
+            ".js file and searches its content)."
+        ),
+    )
+    parser.add_argument(
+        "--js-output-dir",
+        metavar="DIR",
+        help=(
+            "Save every .js file fetched by the JS active analyzer into DIR "
+            "(plus a manifest.json mapping each saved file back to its URL "
+            "and referencing application). Has no effect without "
+            "--allow-active-probes."
         ),
     )
 
@@ -199,7 +232,17 @@ Examples:
         for s in result.skipped:
             print(f"    - {s['subdomain']}: {s['errors']}")
 
-    findings = correlate.correlate_all(result, allow_active=args.allow_active_probes)
+    active_analyzer_kwargs = None
+    if args.allow_active_probes:
+        js_output_dir = args.js_output_dir or _default_js_output_dir(args.input_file)
+        print(f"[*] JS evidence will be saved to {js_output_dir}")
+        active_analyzer_kwargs = {"js_content": {"output_dir": js_output_dir}}
+
+    findings = correlate.correlate_all(
+        result,
+        allow_active=args.allow_active_probes,
+        active_analyzer_kwargs=active_analyzer_kwargs,
+    )
 
     if args.state:
         persisted = state_module.load_state(args.state)
@@ -207,19 +250,28 @@ Examples:
         state_module.save_state(args.state, persisted)
         print(f"[+] Finding IDs persisted in {args.state}")
 
-    print(f"\n[+] {len(findings)} finding(s)")
+    impact_summary = _summarize_findings(findings)
     explanation = correlate.explain_empty(result, findings)
-    if explanation:
-        print(f"[*] {explanation}")
 
+    # The raw JSON dump below can be hundreds of lines long — long enough
+    # on a real scan to push anything printed before it off the top of a
+    # terminal's visible scrollback. It's printed here, BEFORE the
+    # human-readable summary, so that summary is the last thing on
+    # screen once the command finishes, not buried above a wall of JSON.
     output = {"findings": findings}
     print(json.dumps(output, indent=2 if args.pretty else None))
+
+    print(f"\n[+] {len(findings)} finding(s)")
+    if impact_summary:
+        print(f"    {impact_summary}")
+    if explanation:
+        print(f"[*] {explanation}")
 
     if args.html:
         html = report.render_html_report(result, findings)
         with open(args.html, "w", encoding="utf-8") as fh:
             fh.write(html)
-        print(f"\n[+] HTML report saved to {args.html}")
+        print(f"[+] HTML report saved to {args.html}")
 
 
 if __name__ == "__main__":

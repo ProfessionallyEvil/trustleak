@@ -27,6 +27,9 @@ actually part of the engagement's own infrastructure — not a substitute
 for the operator's own authorization to run active probes at all, which
 is what --allow-active-probes confirms.
 """
+import hashlib
+import json
+import os
 import time
 from urllib.parse import urlparse
 
@@ -105,7 +108,32 @@ def _default_confirm(count):
     return answer.strip().lower() == "y"
 
 
-def analyze_js_content(import_result, finding_id_start=1, confirm_fn=None):
+def _save_path_for(output_dir, script_url):
+    """
+    Deterministic, filesystem-safe path to save one fetched .js file's
+    content at — a hash of the URL, not the URL itself, since a URL can
+    contain characters invalid in a filename (query strings, colons) and
+    can be arbitrarily long. The hash is stable across runs: fetching the
+    same URL again overwrites the same file rather than accumulating
+    duplicates.
+    """
+    digest = hashlib.sha256(script_url.encode("utf-8")).hexdigest()[:16]
+    return os.path.join(output_dir, f"{digest}.js")
+
+
+def _write_manifest(output_dir, manifest_entries):
+    """
+    manifest.json maps each saved file back to the URL it came from and
+    which source application referenced it — the hash-named .js files
+    alone would be meaningless as evidence without this.
+    """
+    manifest_path = os.path.join(output_dir, "manifest.json")
+    with open(manifest_path, "w", encoding="utf-8") as fh:
+        json.dump(manifest_entries, fh, indent=2)
+    return manifest_path
+
+
+def analyze_js_content(import_result, finding_id_start=1, confirm_fn=None, output_dir=None):
     """
     Download in-scope referenced .js files and correlate their content
     against suspicious target hostnames. Returns a list of validated
@@ -115,6 +143,13 @@ def analyze_js_content(import_result, finding_id_start=1, confirm_fn=None):
     when the number of in-scope URLs exceeds _CONFIRM_THRESHOLD. Defaults
     to an interactive input() prompt; tests pass a stub to avoid
     blocking, and to avoid making real network requests.
+
+    output_dir: optional directory to save every fetched .js file's
+    content into (not just the ones that produced a finding), plus a
+    manifest.json mapping each saved file back to its source URL and
+    referencing application — evidence for the engagement, not just a
+    correlation result. Created if it doesn't already exist. When None
+    (the default), nothing is written to disk.
     """
     findings = []
     finding_counter = finding_id_start
@@ -132,20 +167,38 @@ def analyze_js_content(import_result, finding_id_start=1, confirm_fn=None):
         if not ask(len(pairs)):
             return findings
 
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+    manifest_entries = {}
+
     category = categories.category_for("js_content_reference")
     potential_impact = categories.default_impact_for(category)
 
-    for source_hostname, script_url in pairs:
+    total = len(pairs)
+    for i, (source_hostname, script_url) in enumerate(pairs, start=1):
+        print(f"[*] [{i}/{total}] Fetching {script_url}")
+
         try:
             response = requests.get(script_url, timeout=_REQUEST_TIMEOUT_SECONDS)
-            content = response.text.lower()
-        except requests.RequestException:
+            content = response.text
+        except requests.RequestException as exc:
+            print(f"[!] [{i}/{total}] Failed: {exc}")
             continue
         finally:
             time.sleep(_DELAY_BETWEEN_REQUESTS_SECONDS)
 
+        if output_dir:
+            save_path = _save_path_for(output_dir, script_url)
+            with open(save_path, "w", encoding="utf-8") as fh:
+                fh.write(content)
+            manifest_entries[os.path.basename(save_path)] = {
+                "url": script_url,
+                "source_hostname": source_hostname,
+            }
+
+        content_lower = content.lower()
         for target in suspicious_targets:
-            if target["hostname"] not in content:
+            if target["hostname"] not in content_lower:
                 continue
 
             evidence_confidence = confidence_tiering.evidence_confidence_tier(
@@ -169,5 +222,9 @@ def analyze_js_content(import_result, finding_id_start=1, confirm_fn=None):
                 potential_impact=potential_impact,
             ))
             finding_counter += 1
+
+    if output_dir and manifest_entries:
+        manifest_path = _write_manifest(output_dir, manifest_entries)
+        print(f"[+] {len(manifest_entries)} fetched .js file(s) saved to {output_dir} ({manifest_path})")
 
     return findings

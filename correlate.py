@@ -39,7 +39,7 @@ _ACTIVE_ANALYZERS = (
 )
 
 
-def correlate_all(import_result, allow_active=False):
+def correlate_all(import_result, allow_active=False, active_analyzer_kwargs=None):
     """
     Run every registered passive analyzer against import_result, in the
     order _PASSIVE_ANALYZERS lists them, threading finding_id_start
@@ -48,12 +48,22 @@ def correlate_all(import_result, allow_active=False):
     allow_active=True is passed explicitly — the default behavior never
     sends a new network request, regardless of what's registered there.
 
+    active_analyzer_kwargs: optional {analyzer_name: {kwarg: value}}
+    dict, e.g. {"js_content": {"output_dir": "/path/to/save"}} — extra
+    keyword arguments passed only to the matching active analyzer by
+    name, so analyzer-specific options (like where js_analyzer.py should
+    save fetched files) don't need a new correlate_all() parameter for
+    every one. Ignored entirely for passive analyzers, and for any name
+    not present in the dict.
+
     Returns the combined, ordered list of findings.
     """
     analyzers = _PASSIVE_ANALYZERS + (_ACTIVE_ANALYZERS if allow_active else ())
+    active_analyzer_kwargs = active_analyzer_kwargs or {}
     findings = []
-    for _name, analyze_fn in analyzers:
-        findings.extend(analyze_fn(import_result, finding_id_start=len(findings) + 1))
+    for name, analyze_fn in analyzers:
+        extra_kwargs = active_analyzer_kwargs.get(name, {})
+        findings.extend(analyze_fn(import_result, finding_id_start=len(findings) + 1, **extra_kwargs))
     return findings
 
 
