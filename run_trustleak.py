@@ -85,6 +85,31 @@ _BANNER = f"""┌─────────────────────
 └─────────────────────────────────────────────────────────────────┘"""
 
 
+def _default_js_output_dir(source_name):
+    """
+    Auto-generated default for where the JS active analyzer saves fetched
+    files, so the person running this never HAS to think of a directory
+    name themselves — only --js-output-dir overrides it, for whoever
+    wants to pick their own. Named after the scan file (so evidence from
+    different engagements doesn't land in the same place by accident)
+    plus a timestamp (so re-running against the same file twice doesn't
+    silently overwrite the previous run's evidence).
+    """
+    slug = os.path.splitext(os.path.basename(source_name))[0] if source_name else "scan"
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"trustleak_js_{slug}_{timestamp}"
+
+
+def _default_oidc_output_dir(source_name):
+    """
+    Same auto-naming philosophy as _default_js_output_dir(), for
+    oauth_discovery_analyzer.py's own evidence (the OIDC discovery
+    documents it finds).
+    """
+    slug = os.path.splitext(os.path.basename(source_name))[0] if source_name else "scan"
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"trustleak_oidc_{slug}_{timestamp}"
+
 def _summarize_findings(findings):
     """
     One short line breaking findings down by potential_impact, printed
@@ -204,10 +229,21 @@ Examples:
         "--js-output-dir",
         metavar="DIR",
         help=(
-            "Save every .js file fetched by the JS active analyzer into DIR "
-            "(plus a manifest.json mapping each saved file back to its URL "
-            "and referencing application). Has no effect without "
-            "--allow-active-probes."
+            "Override where the JS active analyzer saves every fetched .js "
+            "file (plus a manifest.json). Optional — with "
+            "--allow-active-probes and no override, this defaults "
+            "automatically to a folder named after the scan file and the "
+            "current time, so nothing has to be typed in just to get the "
+            "evidence saved."
+        ),
+    )
+    parser.add_argument(
+        "--oidc-output-dir",
+        metavar="DIR",
+        help=(
+            "Override where the OAuth/OIDC discovery analyzer saves every "
+            "valid discovery document it finds (plus a manifest.json). "
+            "Optional — same auto-naming default as --js-output-dir."
         ),
     )
 
@@ -236,7 +272,12 @@ Examples:
     if args.allow_active_probes:
         js_output_dir = args.js_output_dir or _default_js_output_dir(args.input_file)
         print(f"[*] JS evidence will be saved to {js_output_dir}")
-        active_analyzer_kwargs = {"js_content": {"output_dir": js_output_dir}}
+        oidc_output_dir = args.oidc_output_dir or _default_oidc_output_dir(args.input_file)
+        print(f"[*] OIDC evidence will be saved to {oidc_output_dir}")
+        active_analyzer_kwargs = {
+            "js_content": {"output_dir": js_output_dir},
+            "oauth_discovery": {"output_dir": oidc_output_dir},
+        }
 
     findings = correlate.correlate_all(
         result,

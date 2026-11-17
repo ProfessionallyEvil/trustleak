@@ -55,6 +55,7 @@ TYPE_TO_CATEGORY = {
     # the worse case (see CATEGORY_DEFAULT_IMPACT below) rather than
     # guessing which.
     "js_content_reference": "js_content_dependency",
+    "oauth_discovery_reference": "authentication_dependency",
 }
 
 # Baseline potential_impact per category. Two categories have a

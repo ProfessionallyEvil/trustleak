@@ -13,3 +13,9 @@ trustleak_state.json
 # Editor/IDE
 .idea/
 .vscode/
+trustleak_js_*/
+trustleak_oidc_*/
+trustleak_report_*.html
+*.json
+!tests/fixtures/*.json
+!schemas/*.json

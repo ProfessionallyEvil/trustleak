@@ -54,7 +54,7 @@
             "cookie_domain_scope",
             "html_iframe_embed", "html_script_reference", "html_form_action",
             "html_oauth_redirect_uri_reference", "html_saml_acs_reference",
-            "js_content_reference"
+            "js_content_reference", "oauth_discovery_reference"
           ],
           "description": "New types added here must also be registered in trustleak/categories.py's TYPE_TO_CATEGORY — schema.py cross-checks the two and rejects a mismatch (see design doc, open question 4, Option C)."
         },

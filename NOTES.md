@@ -72,3 +72,23 @@ automatically, above that it asks before fetching).
 
 Still unbuilt from the four candidates above: CORS origin-reflection
 testing, OAuth/OIDC discovery, SAML metadata discovery.
+
+## oauth_discovery_analyzer.py — the second active-probe analyzer (built)
+
+Fetches every active application's own `/.well-known/openid-configuration`
+(RFC 8414 / OpenID Connect Discovery — a real, standard path) and
+correlates its JSON content against suspicious targets. O(active
+applications), not O(active × suspicious) — cheaper than js_analyzer.py.
+
+SAML metadata discovery is deliberately NOT built, and not planned as a
+simple extension of this module: unlike OIDC, there is no universal
+standard path for SAML SP/IdP metadata (implementations vary —
+/saml/metadata, /simplesaml/module.php/saml/sp/metadata.php/...,
+/Shibboleth.sso/Metadata, and more). A blind probe would have to guess
+among many non-standard paths, trading reliable coverage for a lot of
+speculative, mostly-wasted requests. Revisit only if a reliable, generic
+discovery mechanism is identified.
+
+Still unbuilt from the four original candidates: CORS origin-reflection
+testing. SAML metadata discovery is now considered closed/declined
+rather than merely deferred (see reasoning above).

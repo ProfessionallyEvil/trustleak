@@ -26,6 +26,7 @@ _RELATIONSHIP_LABELS = {
     "html_oauth_redirect_uri_reference": "OAuth redirect_uri",
     "html_saml_acs_reference": "SAML ACS URL",
     "js_content_reference": "JS file content (active)",
+"oauth_discovery_reference": "OAuth discovery (.well-known, active)",
     # Reserved for a future, not-yet-implemented active-discovery
     # analyzer — see html_analyzer.py's FUTURE WORK notice and NOTES.md.
     "oauth_redirect_uri": "OAuth redirect URI",
@@ -662,6 +663,7 @@ def render_html_report(import_result, findings):
   <button class="filter-btn" onclick="filterByRelationship('cookie',this)">Cookie</button>
   <button class="filter-btn" onclick="filterByRelationship('html',this)">HTML</button>
   <button class="filter-btn" onclick="filterByRelationship('js',this)">JS (active)</button>
+    <button class="filter-btn" onclick="filterByRelationship('oauth_discovery',this)">OAuth Discovery (active)</button>
   <input id="search" type="text" placeholder="Search source / target…" oninput="searchRows(this.value)"/>
 </div>
 
