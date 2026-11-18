@@ -44,7 +44,11 @@ def test_report_shows_why_inline_not_only_on_hover():
     findings = correlate.correlate_all(result)
     html = report.render_html_report(result, findings)
 
-    assert html.count('class="risk-note') == len(findings)
+    # Each finding's risk-note now appears twice by design: once in the
+    # Table view's row, and once in the Attack Path tab's full finding
+    # detail panel (which deliberately reuses the same explanation, so
+    # the two views can never disagree about what a given impact means).
+    assert html.count('class="risk-note') == len(findings) * 2
     assert "an attacker-controlled host could serve JavaScript" in html
 
 

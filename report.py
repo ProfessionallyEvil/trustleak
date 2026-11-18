@@ -8,6 +8,8 @@ immediately. Only the table columns and filters change, to match what a
 TrustLeak finding actually carries (source -> target relationship,
 confidence, evidence) instead of a single subdomain's takeover verdict.
 """
+import re
+
 from trustleak import __version__
 
 _RELATIONSHIP_LABELS = {
@@ -26,7 +28,7 @@ _RELATIONSHIP_LABELS = {
     "html_oauth_redirect_uri_reference": "OAuth redirect_uri",
     "html_saml_acs_reference": "SAML ACS URL",
     "js_content_reference": "JS file content (active)",
-"oauth_discovery_reference": "OAuth discovery (.well-known, active)",
+    "oauth_discovery_reference": "OAuth discovery (.well-known, active)",
     # Reserved for a future, not-yet-implemented active-discovery
     # analyzer — see html_analyzer.py's FUTURE WORK notice and NOTES.md.
     "oauth_redirect_uri": "OAuth redirect URI",
@@ -57,9 +59,6 @@ def _collection_badge(is_active):
     so the distinction NOTES.md requires (never silently mixing passive
     and active evidence) is obvious at a glance in the report, not only
     inspectable by reading the raw JSON's evidence.collected_via field.
-    No analyzer sets collected_via to anything but "shadowsaas_probe"
-    today, so is_active is always False right now — this exists ahead of
-    the first active-probe analyzer, not in response to one.
     """
     if is_active:
         return '<span class="cf-badge cf-badge-high" title="This evidence came from a new request TrustLeak sent itself, not data ShadowSaaS already collected.">ACTIVE</span>'
@@ -171,12 +170,6 @@ def _finding_row(finding):
     is_active = evidence.get("collected_via") == "trustleak_active_request"
     collection_source = "TrustLeak direct request" if is_active else "ShadowSaaS probe"
 
-    # Highlighted only when BOTH dimensions agree this is worth urgent
-    # attention — a high-impact kind of relationship we're also highly
-    # confident actually applies here. Either dimension alone being
-    # "high" isn't enough: a certain-but-low-impact match, or an
-    # uncertain-but-high-impact one, are both worth reviewing, not
-    # flagging as the top-priority row.
     row_cls = "row-high" if (evidence_confidence == "high" and potential_impact == "high") else ""
 
     return f"""
@@ -242,6 +235,159 @@ def _asset_group(target_hostname, group_findings, open_by_default):
     </details>"""
 
 
+def _safe_id(*parts):
+    """A DOM-id-safe string built from arbitrary hostnames/relationship
+    types — only word characters survive, everything else becomes '_'.
+    Doesn't need to be reversible, only unique and stable for one render."""
+    joined = "_".join(parts)
+    return re.sub(r"[^a-zA-Z0-9_]", "_", joined)
+
+
+def _finding_detail_panel(finding, back_to_bucket_id):
+    """
+    The deepest level of the Attack Path drill-down: one finding's full
+    detail, reusing the exact same badge/explanation functions the Table
+    view's rows use — so the two views can never disagree about what a
+    confidence or impact badge means, since they're rendered by the same
+    code. A "Back" link returns to the member list (bucket) this finding
+    came from, which is always computable directly from the finding's own
+    target+relationship_type (a finding belongs to exactly one bucket).
+    """
+    source = finding["source"]["hostname"]
+    target = finding["target"]["hostname"]
+    relationship_type = finding["relationship"]["type"]
+    relationship_label = _RELATIONSHIP_LABELS.get(relationship_type, relationship_type)
+    category = finding["relationship"]["category"]
+    status = finding["relationship"]["status"]
+    assessment = finding["assessment"]
+    evidence_confidence = assessment["evidence_confidence"]
+    potential_impact = assessment["potential_impact"]
+    evidence = finding["evidence"]
+    is_active = evidence.get("collected_via") == "trustleak_active_request"
+    collection_source = "TrustLeak direct request" if is_active else "ShadowSaaS probe"
+    panel_id = _safe_id("finding", finding["finding_id"])
+
+    return f"""
+    <div class="finding-detail-panel" id="{panel_id}">
+      <a class="back-link" onclick="showPanel('{back_to_bucket_id}')">&larr; Back to {relationship_label}</a>
+      <div class="detail-header">
+        <span class="subdomain">{source}</span>
+        <span class="detail-arrow">&#8594;</span>
+        <span class="subdomain">{target}</span>
+      </div>
+      <div class="detail-id">{finding['finding_id']}</div>
+      <div class="detail-badges">
+        {_status_badge(status)}
+        {_tier_badge(evidence_confidence, prefix="Confidence: ", explanation=_explain_evidence_confidence(finding))}
+        {_tier_badge(potential_impact, prefix="Impact: ", explanation=_explain_potential_impact(category))}
+        {_collection_badge(is_active)}
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Relationship</div>
+        <div>{relationship_label} <span class="td-dim">({category})</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Evidence</div>
+        <div class="td-mono">{_evidence_summary(evidence)}</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">What this means if the subdomain is taken over</div>
+        <div class="risk-note risk-note-{potential_impact}">{_explain_potential_impact(category)}</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Collected via</div>
+        <div>{collection_source}</div>
+      </div>
+    </div>"""
+
+
+def _bucket_panel(bucket_id, target_hostname, rel_label, members_findings):
+    """
+    The member list shown when a relationship-type box is clicked — one
+    row per application, each opening that application's full finding
+    detail (never a graph explosion — just a plain, scrollable list).
+    """
+    rows = []
+    for f in members_findings:
+        source = f["source"]["hostname"]
+        is_active = f["evidence"].get("collected_via") == "trustleak_active_request"
+        finding_panel_id = _safe_id("finding", f["finding_id"])
+        rows.append(f"""
+          <div class="member-row" onclick="showPanel('{finding_panel_id}')">
+            <span class="subdomain">{source}</span>
+            {_collection_badge(is_active)}
+          </div>""")
+    rows_html = "\n".join(rows)
+
+    return f"""
+    <div class="bucket-panel" id="{bucket_id}">
+      <div class="detail-breadcrumb">{target_hostname} &#8594; {rel_label} ({len(members_findings)})</div>
+      <div class="member-list">
+{rows_html}
+      </div>
+    </div>"""
+
+
+def _target_card(target_hostname, group_findings):
+    """
+    One compact card per suspicious target: a header naming the asset,
+    then one clickable row per relationship type present, each showing
+    its label and a count badge. Validated (live-confirmed) relationship
+    types are always pinned first and visually distinct — never buried
+    behind a count, consistent with the Table view's "Validated Only"
+    filter treating them as the strongest evidence tier.
+
+    Returns (card_html, panels_html) — the card for the left column, and
+    the HTML for every bucket-panel + finding-detail-panel this target's
+    findings produce, destined for the shared detail pane on the right.
+    """
+    first = group_findings[0]
+    target_status = first["target"]["asset_status"]
+    shadowsaas_conf = first["target"].get("shadowsaas_confidence", "—")
+
+    buckets = {}
+    for f in group_findings:
+        buckets.setdefault(f["relationship"]["type"], []).append(f)
+
+    def _bucket_sort_key(rel_type):
+        is_validated = buckets[rel_type][0]["relationship"]["status"] == "validated"
+        return (0 if is_validated else 1, -len(buckets[rel_type]))
+
+    bucket_rows = []
+    panels = []
+    for rel_type in sorted(buckets, key=_bucket_sort_key):
+        members_findings = buckets[rel_type]
+        rel_label = _RELATIONSHIP_LABELS.get(rel_type, rel_type)
+        is_validated = members_findings[0]["relationship"]["status"] == "validated"
+        bucket_id = _safe_id("bucket", target_hostname, rel_type)
+
+        icon = '<span class="bucket-icon">&#10003;</span> ' if is_validated else ""
+        row_cls = "bucket-row bucket-validated" if is_validated else "bucket-row"
+        bucket_rows.append(f"""
+          <div class="{row_cls}" onclick="showPanel('{bucket_id}')">
+            <span class="bucket-label">{icon}{rel_label}</span>
+            <span class="bucket-count">{len(members_findings)}</span>
+          </div>""")
+
+        panels.append(_bucket_panel(bucket_id, target_hostname, rel_label, members_findings))
+        for f in members_findings:
+            panels.append(_finding_detail_panel(f, bucket_id))
+
+    rows_html = "\n".join(bucket_rows)
+    card_html = f"""
+    <div class="target-card">
+      <svg class="path-connectors"></svg>
+      <div class="target-node" onclick="showPanel('path-placeholder')" title="Back to overview">
+        <span class="subdomain">{target_hostname}</span>
+        <span class="asset-meta">{target_status}</span>
+      </div>
+      <div class="bucket-list">
+{rows_html}
+      </div>
+    </div>"""
+    return card_html, "\n".join(panels)
+
+
 def render_html_report(import_result, findings):
     """
     Render a self-contained HTML report for one TrustLeak run: the asset
@@ -289,6 +435,21 @@ def render_html_report(import_result, findings):
         )
         group_blocks.append(_asset_group(target_hostname, group_findings, open_by_default=i == 0))
     groups_html = "\n".join(group_blocks)
+
+    # Attack Path tab: one compact card per target (left column) plus a
+    # shared detail pane (right column) holding every bucket's member list
+    # and every finding's full detail, all pre-rendered and hidden except
+    # whichever one showPanel() last activated -- see _target_card()'s
+    # docstring for why this replaced an earlier force-directed-graph
+    # design (it got unreadable past a handful of relationship types).
+    target_cards = []
+    detail_panels = []
+    for target_hostname in sorted_targets:
+        card_html, panels_html = _target_card(target_hostname, groups[target_hostname])
+        target_cards.append(card_html)
+        detail_panels.append(panels_html)
+    target_cards_html = "\n".join(target_cards)
+    detail_panels_html = "\n".join(detail_panels)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -431,6 +592,32 @@ def render_html_report(import_result, findings):
   }}
   .stat-card.teal   .stat-value {{ color: var(--teal-lt); }}
   .stat-card.danger .stat-value {{ color: var(--red); }}
+
+  .view-tabs {{
+    padding: 0 48px;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }}
+  .view-tab {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    color: var(--text-dim);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }}
+  .view-tab.active {{
+    background: var(--teal);
+    color: #fff;
+    border-color: var(--teal-lt);
+  }}
 
   .toolbar {{
     padding: 0 48px 18px;
@@ -599,6 +786,145 @@ def render_html_report(import_result, findings):
   .asset-body {{ padding: 8px 20px 4px; overflow-x: auto; }}
   .asset-body table {{ width: 100%; }}
 
+  /* --- Attack Path: master-detail layout --- */
+  .path-layout {{
+    display: flex;
+    gap: 20px;
+    padding: 16px 48px 48px;
+    align-items: flex-start;
+  }}
+  .path-targets {{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 540px;
+    flex-shrink: 0;
+  }}
+  .target-card {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    padding: 24px;
+  }}
+  .path-connectors {{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }}
+  .target-node {{
+    position: relative;
+    flex-shrink: 0;
+    width: 210px;
+    background: rgba(211,32,39,.14);
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background .15s;
+  }}
+  .target-node:hover {{ background: rgba(211,32,39,.24); }}
+  .target-node .subdomain {{ display: block; margin-bottom: 4px; font-size: 12px; line-height: 1.35; word-break: break-all; }}
+  .target-node .asset-meta {{ font-size: 10.5px; }}
+  .bucket-list {{
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }}
+  .bucket-row {{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: background .15s;
+  }}
+  .bucket-row:hover {{ background: rgba(0,78,99,.4); }}
+  .bucket-row.bucket-validated {{
+    background: rgba(211,32,39,.16);
+    border-color: var(--red);
+  }}
+  .bucket-row.bucket-validated:hover {{ background: rgba(211,32,39,.26); }}
+  .bucket-icon {{ color: #f07070; font-weight: 700; flex-shrink: 0; }}
+  .bucket-label {{
+    flex: 1;
+    font-size: 12.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }}
+  .bucket-count {{
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 10px;
+    min-width: 22px;
+    text-align: center;
+  }}
+  .bucket-row.bucket-validated .bucket-count {{ background: rgba(211,32,39,.3); color: #f07070; }}
+
+  .path-detail {{
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    min-height: 440px;
+  }}
+  .path-detail > div {{ display: none; }}
+  .path-detail > div.active-panel {{ display: block; }}
+  .path-detail-placeholder {{
+    color: var(--text-dim);
+    font-size: 13px;
+    padding: 60px 20px;
+    text-align: center;
+  }}
+  .detail-breadcrumb {{
+    color: var(--text-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 18px;
+    font-weight: 700;
+  }}
+  .member-list {{ display: flex; flex-direction: column; gap: 4px; max-height: 500px; overflow-y: auto; }}
+  .member-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .15s;
+  }}
+  .member-row:hover {{ background: rgba(0,78,99,.25); border-color: var(--border); }}
+
+  .back-link {{ display: inline-block; color: var(--teal-lt); cursor: pointer; font-size: 12px; margin-bottom: 20px; }}
+  .back-link:hover {{ color: #fff; }}
+  .detail-header {{ display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }}
+  .detail-arrow {{ color: var(--muted); }}
+  .detail-id {{ color: var(--muted); font-family: 'Share Tech Mono', monospace; font-size: 11px; margin-bottom: 18px; }}
+  .detail-badges {{ display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }}
+  .detail-section {{ margin-bottom: 18px; }}
+  .detail-label {{ font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); font-weight: 700; margin-bottom: 5px; }}
+
   .footer {{
     text-align: center;
     padding: 24px 48px;
@@ -655,22 +981,41 @@ def render_html_report(import_result, findings):
   </div>
 </div>
 
-<div class="toolbar">
-  <button class="filter-btn active" onclick="filterRows('all',this)">All</button>
-  <button class="filter-btn" onclick="filterRows('high',this)">&#9888; High confidence + impact</button>
-  <button class="filter-btn" onclick="filterByRelationship('csp',this)">CSP</button>
-  <button class="filter-btn" onclick="filterByRelationship('cors',this)">CORS</button>
-  <button class="filter-btn" onclick="filterByRelationship('cookie',this)">Cookie</button>
-  <button class="filter-btn" onclick="filterByRelationship('html',this)">HTML</button>
-  <button class="filter-btn" onclick="filterByRelationship('js',this)">JS (active)</button>
-  <button class="filter-btn" onclick="filterByRelationship('oauth_discovery',this)">OAuth Discovery (active)</button>
-  <button class="filter-btn" onclick="filterByStatus('validated',this)">✓ Validated Only</button>
-  <input id="search" type="text" placeholder="Search source / target…" oninput="searchRows(this.value)"/>
+<div class="view-tabs">
+  <button class="view-tab active" onclick="switchView('table', this)">Table</button>
+  <button class="view-tab" onclick="switchView('path', this)">Attack Path</button>
 </div>
 
-<div class="table-wrap">
-  <div id="results-body">
+<div id="view-table">
+  <div class="toolbar">
+    <button class="filter-btn active" onclick="filterRows('all',this)">All</button>
+    <button class="filter-btn" onclick="filterRows('high',this)">&#9888; High confidence + impact</button>
+    <button class="filter-btn" onclick="filterByRelationship('csp',this)">CSP</button>
+    <button class="filter-btn" onclick="filterByRelationship('cors',this)">CORS</button>
+    <button class="filter-btn" onclick="filterByRelationship('cookie',this)">Cookie</button>
+    <button class="filter-btn" onclick="filterByRelationship('html',this)">HTML</button>
+    <button class="filter-btn" onclick="filterByRelationship('js',this)">JS (active)</button>
+    <button class="filter-btn" onclick="filterByRelationship('oauth_discovery',this)">OAuth Discovery (active)</button>
+    <button class="filter-btn" onclick="filterByStatus('validated',this)">&#10003; Validated Only</button>
+    <input id="search" type="text" placeholder="Search source / target…" oninput="searchRows(this.value)"/>
+  </div>
+
+  <div class="table-wrap">
+    <div id="results-body">
 {groups_html}
+    </div>
+  </div>
+</div>
+
+<div id="view-path" style="display:none">
+  <div class="path-layout">
+    <div class="path-targets">
+{target_cards_html}
+    </div>
+    <div class="path-detail" id="path-detail">
+      <div class="path-detail-placeholder active-panel" id="path-placeholder">Click a relationship type on the left to see which applications are affected.</div>
+{detail_panels_html}
+    </div>
   </div>
 </div>
 
@@ -692,11 +1037,6 @@ def render_html_report(import_result, findings):
     const filterActive = currentFilter !== 'all' || !!currentRelationshipFilter || !!currentSearch;
 
     groupEls.forEach(group => {{
-      // A search matching the target hostname itself (shown only in the
-      // group header, not repeated on every row since the Target column
-      // was removed) makes every row in that group a match too — someone
-      // searching for the dangling subdomain by name should still find
-      // every application that references it.
       const headerMatches = currentSearch && group.dataset.target.toLowerCase().includes(currentSearch);
       let anyVisible = false;
 
@@ -706,7 +1046,7 @@ def render_html_report(import_result, findings):
         const relationship = r.dataset.relationship;
         const status = r.dataset.status;
         const text = r.textContent.toLowerCase();
-        
+
         let show = true;
         if (currentFilter === 'high' && !(confidence === 'high' && impact === 'high')) show = false;
         if (currentRelationshipFilter && !relationship.startsWith(currentRelationshipFilter)) show = false;
@@ -750,10 +1090,77 @@ def render_html_report(import_result, findings):
     btn.classList.add('active');
     applyFilters();
   }}
-  
+
   function searchRows(val) {{
     currentSearch = val.toLowerCase();
     applyFilters();
+  }}
+
+  function switchView(view, btn) {{
+    document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-table').style.display = view === 'table' ? '' : 'none';
+    document.getElementById('view-path').style.display = view === 'path' ? '' : 'none';
+    if (view === 'path') {{
+      drawPathConnectors();
+    }}
+  }}
+
+  // Draws one real arrow per relationship-type box, from the target
+  // header down to that box -- a ONE-TIME measurement-and-draw pass
+  // using actual rendered positions (getBoundingClientRect), not a
+  // physics/layout engine. Safe to call repeatedly (e.g. every time the
+  // tab is opened): it just clears and redraws from scratch, and the
+  // list never changes shape after the page loads, so nothing ever goes
+  // stale. Only runs once the tab's container is actually visible --
+  // measuring a display:none element would return a collapsed 0x0 rect.
+  function drawPathConnectors() {{
+    document.querySelectorAll('.target-card').forEach(card => {{
+      const node = card.querySelector('.target-node');
+      const rows = card.querySelectorAll('.bucket-row');
+      const svg = card.querySelector('.path-connectors');
+      if (!node || !rows.length || !svg) return;
+
+      const cardRect = card.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+      // The arrowhead lands ON THE TARGET, not on the relationship box --
+      // it's the referencing app/relationship that trusts the dangling
+      // target, not the other way around (e.g. a CORS-reflecting app
+      // trusts the target, the target doesn't trust it back). So the
+      // line's (x1,y1) origin is each row, and (x2,y2) -- where
+      // marker-end draws the arrowhead -- is the target node.
+      const targetX = nodeRect.right - cardRect.left;
+      const targetY = nodeRect.top - cardRect.top + nodeRect.height / 2;
+
+      let linesHtml = (
+        '<defs><marker id="path-arrow" viewBox="0 0 10 10" refX="8" refY="5" ' +
+        'markerWidth="6" markerHeight="6" orient="auto-start-reverse">' +
+        '<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" ' +
+        'stroke-linecap="round" stroke-linejoin="round"/></marker></defs>'
+      );
+      rows.forEach(row => {{
+        const r = row.getBoundingClientRect();
+        const rowX = r.left - cardRect.left;
+        const rowY = r.top - cardRect.top + r.height / 2;
+        const validated = row.classList.contains('bucket-validated');
+        const colour = validated ? '#D32027' : '#5c7a8a';
+        const width = validated ? 2.5 : 1.5;
+        linesHtml += (
+          '<line x1="' + rowX + '" y1="' + rowY + '" x2="' + targetX + '" y2="' + targetY + '" ' +
+          'stroke="' + colour + '" stroke-width="' + width + '" marker-end="url(#path-arrow)"/>'
+        );
+      }});
+      svg.innerHTML = linesHtml;
+    }});
+  }}
+
+  // Attack Path drill-down: exactly one child of #path-detail is visible
+  // at a time (the placeholder, a bucket's member list, or one finding's
+  // full detail) -- no graph, no layout engine, just a simple panel swap.
+  function showPanel(id) {{
+    document.querySelectorAll('#path-detail > div').forEach(p => p.classList.remove('active-panel'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active-panel');
   }}
 </script>
 </body>
