@@ -114,5 +114,4 @@ background.
 
 ## License
 
-See [LICENSE](LICENSE) — or if one hasn't been added yet, treat this as
-all-rights-reserved until it is.
+MIT — see [LICENSE](LICENSE).
