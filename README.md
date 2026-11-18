@@ -74,6 +74,10 @@ python run_trustleak.py shadowsaas_output.json --html report.html
 # Allow all three active-probe analyzers (JS, OAuth/OIDC discovery, CORS
 # reflection); each asks before sending more than ~20 requests
 python run_trustleak.py shadowsaas_output.json --allow-active-probes --html report.html
+
+# Save findings alongside the summary info needed to re-render later,
+# without re-running the active probes above
+python run_trustleak.py shadowsaas_output.json --allow-active-probes -o findings.json --html report.html
 ```
 
 Run `python run_trustleak.py --help` for the full option list, including
@@ -95,6 +99,25 @@ file mapping each finding's content (source, target, relationship type,
 and matched evidence) to a stable ID — a finding seen before keeps its
 original ID, and a genuinely new one gets the next unused ID, continuing
 from the highest ID ever assigned rather than restarting at `TL-0001`.
+
+### Re-rendering output without re-running active probes
+
+```bash
+# First run: allow active probes, save the findings for later reuse
+python run_trustleak.py shadowsaas_output.json --allow-active-probes -o findings.json --html report.html
+
+# Later: regenerate the HTML report (e.g. after a report.py change) from
+# that saved file, with no network request at all -- no ShadowSaaS scan
+# file needed, no --allow-active-probes, no re-triggered JS/OIDC/CORS probes
+python run_trustleak.py --render-from findings.json --html report_v2.html
+```
+
+`--render-from` skips `import_shadowsaas_output()`/`correlate_all()`
+entirely and loads findings straight from a file previously written with
+`-o`/`--output`. Passing a raw ShadowSaaS scan file here by mistake
+(instead of to the plain positional argument) fails immediately with a
+message naming the problem, rather than silently producing an empty
+report.
 
 ## Companion project
 
